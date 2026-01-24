@@ -1,0 +1,49 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  SUPERADMIN
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String?   
+  username  String    @unique
+  password  String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  eggLogs   EggLog[]
+  
+  @@map("users")
+}
+
+model EggCount {
+  id          String   @id @default(cuid())
+  count       Int      @default(0)
+  lastUpdated DateTime @default(now()) @updatedAt
+  
+  @@map("egg_counts")
+}
+
+model EggLog {
+  id            String   @id @default(cuid())
+  action        String   // INCREMENT, REDUCE_EGGS, REDUCE_RACKS
+  previousCount Int
+  newCount      Int
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  
+  @@map("egg_logs")
+}
