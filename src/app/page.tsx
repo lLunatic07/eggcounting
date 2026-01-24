@@ -1,68 +1,88 @@
-import { EggCounter } from '@/components/EggCounter'
-import Link from 'next/link'
+"use client";
+
+import { Navbar } from "@/components/Navbar";
+import { useEggCount } from "@/features/eggs";
+import { LayoutGrid, Egg, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  return (
-    <main className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-700/50 backdrop-blur-sm bg-gray-900/50 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">🥚</span>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-              Egg Counter
-            </h1>
-          </div>
-          <Link 
-            href="/login" 
-            className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-lg transition-colors border border-amber-500/30"
-          >
-            Login Admin
-          </Link>
-        </div>
-      </header>
+  const { data, isLoading } = useEggCount();
 
-      {/* Main content */}
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Hero section */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-200 to-orange-400 bg-clip-text text-transparent">
-            Monitoring Real-time
+  // Default values if loading or no data
+  const eggCount = data?.count ?? 0;
+  const rackCount = data?.racks ?? 0;
+
+  return (
+    <main className="min-h-screen bg-[#F8FAFC] font-sans">
+      <Navbar />
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#4F46E5] mb-2">
+            Stok Telur Tersedia
           </h2>
-          <p className="text-gray-400 max-w-lg mx-auto">
-            Pantau jumlah telur secara real-time menggunakan sistem IoT terintegrasi
+          <p className="text-gray-500">
+            List telur yang tersedia per butir dan per rak
           </p>
         </div>
 
-        {/* Egg counter component */}
-        <EggCounter />
+        {/* Cards Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Card Butir */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-[2rem] p-12 text-center shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="w-20 h-20 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-6">
+              <Egg className="w-10 h-10 text-[#0FA6E5]" strokeWidth={2.5} />
+            </div>
 
-        {/* Info section */}
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 text-center">
-            <div className="text-2xl mb-2">📊</div>
-            <h3 className="font-semibold text-gray-200 mb-1">Real-time</h3>
-            <p className="text-sm text-gray-400">Update otomatis setiap telur terdeteksi</p>
-          </div>
-          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 text-center">
-            <div className="text-2xl mb-2">🔌</div>
-            <h3 className="font-semibold text-gray-200 mb-1">IoT Sensor</h3>
-            <p className="text-sm text-gray-400">Menggunakan sensor ultrasonik HC-SR04</p>
-          </div>
-          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 text-center">
-            <div className="text-2xl mb-2">📦</div>
-            <h3 className="font-semibold text-gray-200 mb-1">Per Rak</h3>
-            <p className="text-sm text-gray-400">Otomatis hitung rak (30 telur = 1 rak)</p>
-          </div>
+            {isLoading ? (
+              <div className="h-16 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
+              </div>
+            ) : (
+              <div className="text-6xl font-bold text-gray-900 mb-4 tabular-nums">
+                {eggCount}
+              </div>
+            )}
+
+            <div className="text-3xl font-bold text-gray-800 mb-2">Butir</div>
+            <div className="text-gray-400">Telur Per Butir</div>
+          </motion.div>
+
+          {/* Card Rak */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-white rounded-[2rem] p-12 text-center shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="w-20 h-20 mx-auto bg-orange-50 rounded-full flex items-center justify-center mb-6">
+              <LayoutGrid
+                className="w-10 h-10 text-orange-400"
+                strokeWidth={2.5}
+              />
+            </div>
+
+            {isLoading ? (
+              <div className="h-16 flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
+              </div>
+            ) : (
+              <div className="text-6xl font-bold text-gray-900 mb-4 tabular-nums">
+                {rackCount}
+              </div>
+            )}
+
+            <div className="text-3xl font-bold text-gray-800 mb-2">Rak</div>
+            <div className="text-gray-400">Telur Per Rak</div>
+          </motion.div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-700/50 mt-12">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
-          Egg Counting System © {new Date().getFullYear()}
-        </div>
-      </footer>
     </main>
-  )
+  );
 }

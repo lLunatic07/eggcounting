@@ -1,124 +1,135 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useAuth } from '@/features/auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { ChevronLeft } from 'lucide-react'
+import { Button, Input } from '@/components/ui'
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const { login, isLoading, error } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setIsLoading(true)
-
-    try {
-      const result = await signIn('credentials', {
-        identifier,
-        password,
-        redirect: false
-      })
-
-      if (result?.error) {
-        setError('Email/username atau password salah')
-      } else {
-        router.push('/dashboard')
-        router.refresh()
-      }
-    } catch {
-      setError('Terjadi kesalahan, silakan coba lagi')
-    } finally {
-      setIsLoading(false)
+    const success = await login({ identifier, password })
+    if (success) {
+      router.push('/dashboard')
     }
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3">
-            <span className="text-4xl">🥚</span>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-              Egg Counter
+    <main className="min-h-screen relative flex items-center justify-center overflow-hidden font-sans">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/18929387_rm218batch4-ning-40.jpg" 
+          alt="Background" 
+          className="w-full h-full object-cover"
+        />
+        {/* Overlay agar text tetap terbaca jika background terlalu terang */}
+        <div className="absolute inset-0 bg-black/10" />
+      </div>
+
+      {/* Back to Home Link */}
+      <motion.div 
+        className="absolute top-0 left-0 w-full p-6 sm:p-8 z-10"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Link 
+          href="/" 
+          className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-80 transition-opacity drop-shadow-md"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Home page
+        </Link>
+      </motion.div>
+
+      {/* Login Card - Glassmorphism */}
+      <motion.div 
+        className="relative z-20 w-full max-w-md mx-4"
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ 
+          duration: 0.5,
+          ease: [0.16, 1, 0.3, 1]
+        }}
+      >
+        <div className="bg-white/30 backdrop-blur-xl border border-white/40 p-8 md:p-10 rounded-2xl shadow-2xl">
+          {/* Header */}
+          <motion.div 
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome Back!
             </h1>
-          </Link>
-        </div>
+            <p className="text-gray-700 font-medium text-sm">
+              We missed you! Please enter your details.
+            </p>
+          </motion.div>
 
-        {/* Login form */}
-        <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
-          <h2 className="text-xl font-semibold text-center mb-6 text-gray-200">
-            Login Admin
-          </h2>
+          {/* Form */}
+          <motion.form 
+            onSubmit={handleSubmit} 
+            className="space-y-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Input
+              label="Email or Username"
+              type="text"
+              id="identifier"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="Enter your Email or Username"
+              variant="light"
+              className="bg-white/60 border-transparent focus:bg-white"
+              required
+            />
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="identifier" className="block text-sm font-medium text-gray-300 mb-2">
-                Email atau Username
-              </label>
-              <input
-                type="text"
-                id="identifier"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                placeholder="admin@example.com atau admin"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+            <Input
+              label="Password"
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter Password"
+              variant="light"
+              className="bg-white/60 border-transparent focus:bg-white"
+              required
+            />
 
             {error && (
-              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm text-center">
+              <motion.div 
+                className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm text-center"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
 
-            <button
+            <Button
               type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              isLoading={isLoading}
+              className="w-full rounded-full"
+              size="lg"
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Memproses...
-                </span>
-              ) : (
-                'Masuk'
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-gray-400 hover:text-amber-400 transition-colors">
-              ← Kembali ke Monitoring
-            </Link>
-          </div>
+              Sign in
+            </Button>
+          </motion.form>
         </div>
-      </div>
+      </motion.div>
     </main>
   )
 }

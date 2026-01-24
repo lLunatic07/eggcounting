@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { calculateRacks, verifyIotApiKey } from '@/lib/utils'
 import { ApiResponse } from '@/types'
-import { broadcastEggUpdate } from '@/lib/websocket'
+import { triggerWebSocketUpdate } from '@/lib/websocket'
 
 // POST /api/eggs/increment - Increment egg count (IoT)
 export async function POST(request: NextRequest) {
@@ -50,12 +50,7 @@ export async function POST(request: NextRequest) {
     const { racks, remainingEggs } = calculateRacks(newCount)
 
     // Broadcast update via WebSocket
-    broadcastEggUpdate({
-      count: newCount,
-      racks,
-      remainingEggs,
-      lastUpdated: updated.lastUpdated
-    })
+    await triggerWebSocketUpdate()
 
     return NextResponse.json<ApiResponse>(
       {

@@ -108,6 +108,14 @@ wss.on('connection', (ws) => {
         }
 
         await handleEggIncrement(data.data?.increment || 1)
+      } else if (data.event === 'egg:broadcast') {
+        // Broadcast update request from API
+        if (data.data?.apiKey !== IOT_API_KEY) {
+          ws.send(JSON.stringify({ error: 'Invalid API key' }))
+          return
+        }
+        
+        await broadcastEggUpdate()
       }
     } catch (error) {
       console.error('Error parsing message:', error)

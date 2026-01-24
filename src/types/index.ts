@@ -44,7 +44,7 @@ export interface LoginRequest {
 }
 
 export interface CreateUserRequest {
-  email: string
+  email?: string
   username: string
   password: string
   role: Role

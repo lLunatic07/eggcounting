@@ -1,11 +1,11 @@
 'use client'
 
-import { useEggCount } from '@/hooks/useEggCount'
+import { useEggCount } from '@/features/eggs'
 
 export function EggCounter() {
-  const { data, isConnected } = useEggCount()
+  const { data, isConnected, isLoading } = useEggCount()
 
-  if (!data) {
+  if (isLoading || !data) {
     return (
       <div className="animate-pulse bg-gray-800 rounded-2xl p-8 text-center">
         <div className="h-20 bg-gray-700 rounded mb-4"></div>

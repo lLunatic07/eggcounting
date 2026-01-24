@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -15,7 +15,7 @@ enum Role {
 }
 
 model User {
-  id        String    @id @default(cuid())
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String?   
   username  String    @unique
   password  String
@@ -29,7 +29,7 @@ model User {
 }
 
 model EggCount {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   count       Int      @default(0)
   lastUpdated DateTime @default(now()) @updatedAt
   
@@ -37,11 +37,11 @@ model EggCount {
 }
 
 model EggLog {
-  id            String   @id @default(cuid())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   action        String   // INCREMENT, REDUCE_EGGS, REDUCE_RACKS
   previousCount Int
   newCount      Int
-  userId        String?
+  userId        String?  @db.ObjectId
   user          User?    @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
   

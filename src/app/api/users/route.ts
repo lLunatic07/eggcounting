@@ -34,17 +34,23 @@ export async function POST(request: NextRequest) {
     const { email, username, password, role } = body
 
     // Validate input
-    if (!email || !username || !password || !role) {
+
+    if (!username || !password || !role) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Email, username, password, and role are required' },
+        { success: false, error: 'Username, password, and role are required' },
         { status: 400 }
       )
     }
 
     // Check if email or username already exists
+    const orConditions: any[] = [{ username }]
+    if (email) {
+      orConditions.push({ email })
+    }
+
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ email }, { username }]
+        OR: orConditions
       }
     })
 
@@ -61,7 +67,7 @@ export async function POST(request: NextRequest) {
     // Create user
     const newUser = await prisma.user.create({
       data: {
-        email,
+        email: (email || null) as any,
         username,
         password: hashedPassword,
         role
