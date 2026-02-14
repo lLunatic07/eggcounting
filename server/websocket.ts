@@ -133,5 +133,5 @@ wss.on('connection', (ws) => {
   })
 })
 
-console.log(`🚀 WebSocket server running on ws://localhost:${PORT}`)
-console.log(`🔑 IoT API Key: ${IOT_API_KEY.substring(0, 4)}...`)
+console.log(`WebSocket server running on ws://localhost:${PORT}`)
+console.log(` IoT API Key: ${IOT_API_KEY.substring(0, 4)}...`)
