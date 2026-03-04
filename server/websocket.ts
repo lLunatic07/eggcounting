@@ -79,7 +79,7 @@ async function handleEggIncrement(increment: number = 1) {
       }
     })
 
-    console.log(`🥚 Egg count: ${previousCount} -> ${newCount}`)
+    console.log(` Egg count: ${previousCount} -> ${newCount}`)
 
     // Broadcast update to all clients
     await broadcastEggUpdate()
@@ -98,7 +98,7 @@ wss.on('connection', (ws) => {
   ws.on('message', async (message) => {
     try {
       const data = JSON.parse(message.toString())
-      console.log('📩 Received:', data)
+      console.log('Received:', data)
 
       if (data.event === 'egg:increment') {
         // Verify API key for IoT devices
@@ -123,7 +123,7 @@ wss.on('connection', (ws) => {
   })
 
   ws.on('close', () => {
-    console.log('📴 Client disconnected')
+    console.log(' Client disconnected')
     clients.delete(ws)
   })
 
@@ -133,5 +133,5 @@ wss.on('connection', (ws) => {
   })
 })
 
-console.log(`🚀 WebSocket server running on ws://localhost:${PORT}`)
-console.log(`🔑 IoT API Key: ${IOT_API_KEY.substring(0, 4)}...`)
+console.log(`WebSocket server running on ws://localhost:${PORT}`)
+console.log(` IoT API Key: ${IOT_API_KEY.substring(0, 4)}...`)

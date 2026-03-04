@@ -31,7 +31,7 @@ export default function LoginPage() {
           alt="Background" 
           className="w-full h-full object-cover"
         />
-        {/* Overlay agar text tetap terbaca jika background terlalu terang */}
+       
         <div className="absolute inset-0 bg-black/10" />
       </div>
 
