@@ -23,6 +23,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Build args for NEXT_PUBLIC_* variables (inlined at build time by Next.js)
+ARG NEXT_PUBLIC_WS_URL
+ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
+
+# Dummy DATABASE_URL for prisma to pass validation during build (not used for actual connection)
+ENV DATABASE_URL="mongodb://dummy:27017/dummy"
+
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
