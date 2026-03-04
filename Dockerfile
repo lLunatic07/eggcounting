@@ -7,6 +7,10 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
+RUN apt-get update -y \
+  && apt-get install -y openssl \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN npm ci
 RUN npx prisma generate
 
@@ -32,11 +36,14 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 
-# Copy only production files
+# 👉 INI YANG KURANG KEMARIN
+RUN apt-get update -y \
+  && apt-get install -y openssl \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
-
 CMD ["node", "server.js"]
