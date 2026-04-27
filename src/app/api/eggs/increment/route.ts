@@ -5,6 +5,9 @@ import { ApiResponse } from '@/types'
 import { triggerWebSocketUpdate } from '@/lib/websocket'
 
 // POST /api/eggs/increment - Increment egg count (IoT)
+// Menerima dua mode:
+//   1. { totalCount: N } — ESP kirim jumlah absolut, server hitung selisih (IDEMPOTENT, retry-safe)
+//   2. { increment: N }  — fallback mode lama (TIDAK retry-safe)
 export async function POST(request: NextRequest) {
   try {
     // Verify IoT API key
@@ -18,7 +21,6 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const increment = body.increment || 1
 
     // Get or create egg count
     let eggCount = await prisma.eggCount.findFirst()
@@ -30,10 +32,41 @@ export async function POST(request: NextRequest) {
     }
 
     const previousCount = eggCount.count
-    const newCount = previousCount + increment
+    let newCount: number
+
+    if (body.totalCount !== undefined) {
+      // ✅ Mode idempotent: ESP kirim total absolut
+      // Server hanya update kalau totalCount > count saat ini
+      // Retry berapa kali pun, hasilnya tetap sama
+      const totalCount = Number(body.totalCount)
+
+      if (totalCount <= previousCount) {
+        // Sudah diproses sebelumnya (retry dari ESP), skip
+        const { racks, remainingEggs } = calculateRacks(previousCount)
+        return NextResponse.json<ApiResponse>(
+          {
+            success: true,
+            data: {
+              previousCount,
+              newCount: previousCount,
+              racks,
+              remainingEggs,
+              skipped: true
+            }
+          },
+          { status: 200 }
+        )
+      }
+
+      newCount = totalCount
+    } else {
+      // Fallback: mode increment lama (backward compatible)
+      const increment = body.increment || 1
+      newCount = previousCount + increment
+    }
 
     // Update egg count
-    const updated = await prisma.eggCount.update({
+    await prisma.eggCount.update({
       where: { id: eggCount.id },
       data: { count: newCount }
     })
