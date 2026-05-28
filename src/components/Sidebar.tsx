@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutGrid, UserPlus, LogOut } from 'lucide-react'
+import { LayoutGrid, UserPlus, LogOut, ClipboardCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/features/auth'
 
@@ -12,6 +12,11 @@ const menuItems = [
     title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutGrid,
+  },
+  {
+    title: 'Approval',
+    href: '/dashboard/approval',
+    icon: ClipboardCheck,
   },
   {
     title: 'Create User',

@@ -13,23 +13,21 @@ const char* apiKey = "esp32-egg-counter-key";
 #define echoPin 27
 #define buzzerPin 17
 
-// Pengaturan Sensor
-const float thresholdDistanceCm = 3.0;
+// Pengaturan Sensor — HYSTERESIS
+const float enterThreshold = 3.0;  // objek terdeteksi kalau < 3cm
+const float exitThreshold = 4.5;   // objek dianggap pergi kalau > 4.5cm
 
-// ✅ Edge detection dengan debounce terpisah untuk masuk & keluar
-// - presentConfirm: berapa pembacaan berturut-turut "ada objek" untuk konfirmasi masuk
-// - absentConfirm: berapa pembacaan berturut-turut "tidak ada objek" untuk konfirmasi keluar
-// absentConfirm rendah = lebih sensitif mendeteksi celah kecil antara 2 telur
-const int presentConfirm = 2;
-const int absentConfirm = 2;
+// Edge detection
+const int presentConfirm = 1;   // 1: LANGSUNG deteksi seperti kode lama
+const int absentConfirm = 10;   // 10: butuh ~200ms tidak ada objek untuk reset (cegah double count karena noise)
 
-int presentCount = 0;       // counter pembacaan "ada objek" berturut-turut
-int absentCount = 0;        // counter pembacaan "tidak ada objek" berturut-turut
-bool confirmedPresent = false;  // status terkonfirmasi
+int presentCount = 0;
+int absentCount = 0;
+bool confirmedPresent = false;
 
 // Penghitung
 volatile unsigned long eggCount = 0;
-volatile unsigned long lastSentCount = 0;  // track jumlah yang sudah berhasil dikirim server
+volatile unsigned long lastSentCount = 0;
 
 // Timer Serial Monitor
 unsigned long lastPrintTime = 0;
@@ -39,6 +37,8 @@ const long printInterval = 500;
 portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 
 // --- Fungsi ---
+
+// Pembacaan jarak langsung (cepat, seperti kode lama)
 float getDistance() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -49,7 +49,7 @@ float getDistance() {
   if (duration > 0) {
     return (duration * 0.0343) / 2.0;
   } else {
-    return 999.9;
+    return -1.0;  // timeout
   }
 }
 
@@ -83,8 +83,7 @@ bool sendCountUpdate() {
   http.addHeader("X-API-Key", apiKey);
   http.setTimeout(5000);
 
-  // ✅ Kirim totalCount absolut — server hitung selisih sendiri
-  // Retry berapa kali pun, server tidak akan double count
+  // ✅ Kirim totalCount absolut — retry-safe
   String requestBody = "{\"totalCount\":" + String(currentEgg) + "}";
   Serial.printf("[HTTP] Mengirim totalCount: %lu (belum terkirim: %lu)\n", currentEgg, diff);
 
@@ -94,7 +93,6 @@ bool sendCountUpdate() {
     Serial.printf("[HTTP] Sukses (%d): %s\n", httpResponseCode, response.c_str());
     http.end();
 
-    // Update lastSentCount hanya setelah server konfirmasi
     portENTER_CRITICAL(&mux);
     lastSentCount = currentEgg;
     portEXIT_CRITICAL(&mux);
@@ -118,7 +116,7 @@ void httpTask(void* parameter) {
     if (currentEgg > lastSent) {
       bool success = sendCountUpdate();
       if (!success) {
-        delay(2000); // tunggu lalu retry
+        delay(2000);
       } else {
         delay(100);
       }
@@ -171,33 +169,37 @@ void loop() {
     lastPrintTime = now;
   }
 
-  // ✅ Edge Detection dengan debounce asimetris
-  //
-  // CARA KERJA:
-  // - Sensor baca jarak setiap 20ms (~50x/detik)
-  // - Kalau jarak < 3cm → "ada objek"
-  // - Butuh 2 pembacaan berturut-turut "ada" untuk konfirmasi MASUK (cegah noise)
-  // - Butuh 2 pembacaan berturut-turut "tidak ada" untuk konfirmasi KELUAR (deteksi celah)
-  //
-  // SKENARIO 1: Objek DIAM di depan sensor
-  //   → Semua pembacaan < 3cm, tidak pernah ada pembacaan "tidak ada"
-  //   → confirmedPresent tetap true, tidak pernah reset
-  //   → Hanya 1 hitungan ✅
-  //
-  // SKENARIO 2: 2 telur berdekatan (celah 3cm)
-  //   → Telur 1 lewat: pembacaan < 3cm → confirmedPresent = true → hitung 1
-  //   → Celah: pembacaan > 3cm selama ~2-15 pembacaan → confirmedPresent = false (reset)
-  //   → Telur 2 lewat: pembacaan < 3cm → confirmedPresent = true lagi → hitung 2 ✅
+  // Abaikan pembacaan timeout
+  if (distance < 0) {
+    delay(20);
+    return;
+  }
 
-  bool objectNow = (distance < thresholdDistanceCm);
+  // ✅ HYSTERESIS + MEDIAN FILTER Edge Detection
+  //
+  // 1. Median filter sudah menghilangkan spike noise dari sensor
+  //    [2.1, 2.0, 12.5, 2.2, 2.0] → median = 2.1 (bukan 12.5)
+  //
+  // 2. Hysteresis mencegah bouncing di batas threshold
+  //    MASUK: < 3cm | KELUAR: > 4.5cm | Zona mati: 3-4.5cm
+  //
+  // 3. Edge detection: hanya hitung saat transisi absent → present
+  //
+  // Kombinasi ketiganya:
+  //   Objek diam 2cm → median selalu ~2cm → tidak pernah > 4.5cm → 1 hitungan ✅
+  //   2 telur dekat → celah nyata terlihat di median → > 4.5cm → reset → 2 hitungan ✅
 
-  if (objectNow) {
+  bool isPresent = (distance < enterThreshold);
+  bool isAbsent = (distance > exitThreshold);
+
+  if (isPresent) {
     presentCount++;
     absentCount = 0;
-  } else {
+  } else if (isAbsent) {
     absentCount++;
     presentCount = 0;
   }
+  // zona mati (3-4.5cm): tidak mengubah state
 
   bool wasConfirmedPresent = confirmedPresent;
 
@@ -208,7 +210,7 @@ void loop() {
     confirmedPresent = false;
   }
 
-  // Hitung hanya saat TRANSISI: false → true (objek baru masuk)
+  // Hitung hanya saat TRANSISI: false → true
   if (confirmedPresent && !wasConfirmedPresent) {
     eggCount++;
     Serial.printf("\n>>> Telur Terdeteksi! Total: %lu\n", eggCount);

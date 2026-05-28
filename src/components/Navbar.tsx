@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { useAuth } from "@/features/auth";
-import { Menu, X, LogOut, LayoutGrid, User } from "lucide-react";
+import { Menu, X, LogOut, LayoutGrid, User, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
@@ -26,6 +26,14 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
+            <Link
+              href={isAuthenticated ? "/order" : "/login"}
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-1.5"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Beli Telur
+            </Link>
+
             {isSuperAdmin && (
               <Link
                 href="/dashboard"
@@ -117,6 +125,15 @@ export function Navbar() {
               )}
 
               <div className="space-y-2">
+                <Link
+                  href={isAuthenticated ? "/order" : "/login"}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium transition-colors"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Beli Telur
+                </Link>
+
                 {isSuperAdmin && (
                   <Link
                     href="/dashboard"

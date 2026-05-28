@@ -128,6 +128,22 @@ export default function LoginPage() {
               Sign in
             </Button>
           </motion.form>
+
+          {/* Link to Register */}
+          <motion.p
+            className="text-center mt-6 text-sm text-gray-700"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/register"
+              className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              Register
+            </Link>
+          </motion.p>
         </div>
       </motion.div>
     </main>

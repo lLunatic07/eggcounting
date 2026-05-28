@@ -14,6 +14,12 @@ enum Role {
   SUPERADMIN
 }
 
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String?   
@@ -23,7 +29,9 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   
-  eggLogs   EggLog[]
+  eggLogs        EggLog[]
+  orders         EggShopOrder[] @relation("OrdersByUser")
+  approvedOrders EggShopOrder[] @relation("OrdersApproved")
   
   @@map("users")
 }
@@ -46,4 +54,34 @@ model EggLog {
   createdAt     DateTime @default(now())
   
   @@map("egg_logs")
+}
+
+model EggShopOrder {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String      @db.ObjectId
+  user           User        @relation("OrdersByUser", fields: [userId], references: [id])
+  phoneNumber    String
+  count          Int         // Jumlah telur (butir) atau jumlah rak
+  orderType      String      // "BUTIR" atau "RAK"
+  status         OrderStatus @default(PENDING)
+  approvedById   String?     @db.ObjectId
+  approvedBy     User?       @relation("OrdersApproved", fields: [approvedById], references: [id])
+  approvedAt     DateTime?
+  rejectedReason String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@map("egg_shop_orders")
+}
+
+model OtpVerification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  username  String
+  password  String
+  otpCode   String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("otp_verifications")
 }
