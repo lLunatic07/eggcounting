@@ -1,255 +1,265 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, Mail, User, Lock, ArrowRight, RefreshCw } from 'lucide-react'
-import { Button, Input } from '@/components/ui'
-import axios from 'axios'
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronLeft,
+  Mail,
+  User,
+  Lock,
+  ArrowRight,
+  RefreshCw,
+} from "lucide-react";
+import { Button, Input } from "@/components/ui";
+import axios from "axios";
 
-type Step = 'register' | 'otp'
+type Step = "register" | "otp";
 
 export default function RegisterPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   // Step state
-  const [step, setStep] = useState<Step>('register')
+  const [step, setStep] = useState<Step>("register");
 
   // Form fields
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // OTP fields
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Status
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Timer
-  const [countdown, setCountdown] = useState(300) // 5 minutes
-  const [canResend, setCanResend] = useState(false)
-  const [resendCooldown, setResendCooldown] = useState(0)
+  const [countdown, setCountdown] = useState(300); // 5 minutes
+  const [canResend, setCanResend] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   // Countdown timer
   useEffect(() => {
-    if (step !== 'otp') return
-    if (countdown <= 0) return
+    if (step !== "otp") return;
+    if (countdown <= 0) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          clearInterval(timer)
-          return 0
+          clearInterval(timer);
+          return 0;
         }
-        return prev - 1
-      })
-    }, 1000)
+        return prev - 1;
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [step, countdown])
+    return () => clearInterval(timer);
+  }, [step, countdown]);
 
   // Resend cooldown
   useEffect(() => {
     if (resendCooldown <= 0) {
-      setCanResend(true)
-      return
+      setCanResend(true);
+      return;
     }
 
     const timer = setInterval(() => {
       setResendCooldown((prev) => {
         if (prev <= 1) {
-          clearInterval(timer)
-          setCanResend(true)
-          return 0
+          clearInterval(timer);
+          setCanResend(true);
+          return 0;
         }
-        return prev - 1
-      })
-    }, 1000)
+        return prev - 1;
+      });
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [resendCooldown])
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60)
-    const s = seconds % 60
-    return `${m}:${s.toString().padStart(2, '0')}`
-  }
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   // Handle send OTP
   const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     // Client-side validation
     if (!username.trim()) {
-      setError('Username wajib diisi')
-      return
+      setError("Username wajib diisi");
+      return;
     }
 
     if (!email.trim()) {
-      setError('Email wajib diisi')
-      return
+      setError("Email wajib diisi");
+      return;
     }
 
     if (password.length < 6) {
-      setError('Password minimal 6 karakter')
-      return
+      setError("Password minimal 6 karakter");
+      return;
     }
 
     if (password !== confirmPassword) {
-      setError('Password dan konfirmasi password tidak cocok')
-      return
+      setError("Password dan konfirmasi password tidak cocok");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      await axios.post('/api/auth/register/send-otp', {
+      await axios.post("/api/auth/register/send-otp", {
         username: username.trim(),
         email: email.trim(),
         password,
-      })
+      });
 
-      setStep('otp')
-      setCountdown(300)
-      setCanResend(false)
-      setResendCooldown(60)
+      setStep("otp");
+      setCountdown(300);
+      setCanResend(false);
+      setResendCooldown(60);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error)
+        setError(err.response.data.error);
       } else {
-        setError('Terjadi kesalahan. Silakan coba lagi.')
+        setError("Terjadi kesalahan. Silakan coba lagi.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Handle OTP input
   const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return // Only digits
+    if (!/^\d*$/.test(value)) return; // Only digits
 
-    const newOtp = [...otp]
-    newOtp[index] = value.slice(-1) // Take last digit only
-    setOtp(newOtp)
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1); // Take last digit only
+    setOtp(newOtp);
 
     // Auto-focus next input
     if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus()
+      otpRefs.current[index + 1]?.focus();
     }
-  }
+  };
 
   const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus()
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus();
     }
-  }
+  };
 
   const handleOtpPaste = (e: React.ClipboardEvent) => {
-    e.preventDefault()
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    e.preventDefault();
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
     if (pasted.length === 6) {
-      setOtp(pasted.split(''))
-      otpRefs.current[5]?.focus()
+      setOtp(pasted.split(""));
+      otpRefs.current[5]?.focus();
     }
-  }
+  };
 
   // Handle verify OTP
   const handleVerifyOtp = useCallback(async () => {
-    const otpCode = otp.join('')
+    const otpCode = otp.join("");
     if (otpCode.length !== 6) {
-      setError('Masukkan 6 digit kode OTP')
-      return
+      setError("Masukkan 6 digit kode OTP");
+      return;
     }
 
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
 
     try {
-      await axios.post('/api/auth/register/verify-otp', {
+      await axios.post("/api/auth/register/verify-otp", {
         email: email.trim(),
         otpCode,
-      })
+      });
 
-      setSuccess('Akun berhasil dibuat! Mengalihkan ke halaman login...')
+      setSuccess("Akun berhasil dibuat! Mengalihkan ke halaman login...");
       setTimeout(() => {
-        router.push('/login')
-      }, 2000)
+        router.push("/login");
+      }, 2000);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error)
+        setError(err.response.data.error);
       } else {
-        setError('Gagal memverifikasi OTP. Silakan coba lagi.')
+        setError("Gagal memverifikasi OTP. Silakan coba lagi.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [otp, email, router])
+  }, [otp, email, router]);
 
   // Auto-submit when 6 digits are filled
   useEffect(() => {
-    if (otp.every((d) => d !== '') && step === 'otp') {
-      handleVerifyOtp()
+    if (otp.every((d) => d !== "") && step === "otp") {
+      handleVerifyOtp();
     }
-  }, [otp, step, handleVerifyOtp])
+  }, [otp, step, handleVerifyOtp]);
 
   // Handle resend OTP
   const handleResendOtp = async () => {
-    if (!canResend) return
-    setIsLoading(true)
-    setError(null)
+    if (!canResend) return;
+    setIsLoading(true);
+    setError(null);
 
     try {
-      await axios.post('/api/auth/register/send-otp', {
+      await axios.post("/api/auth/register/send-otp", {
         username: username.trim(),
         email: email.trim(),
         password,
-      })
+      });
 
-      setOtp(['', '', '', '', '', ''])
-      setCountdown(300)
-      setCanResend(false)
-      setResendCooldown(60)
-      setSuccess('Kode OTP baru telah dikirim!')
-      setTimeout(() => setSuccess(null), 3000)
+      setOtp(["", "", "", "", "", ""]);
+      setCountdown(300);
+      setCanResend(false);
+      setResendCooldown(60);
+      setSuccess("Kode OTP baru telah dikirim!");
+      setTimeout(() => setSuccess(null), 3000);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error)
+        setError(err.response.data.error);
       } else {
-        setError('Gagal mengirim ulang OTP.')
+        setError("Gagal mengirim ulang OTP.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <main className="min-h-screen relative flex items-center justify-center overflow-hidden font-sans">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="/18929387_rm218batch4-ning-40.jpg" 
-          alt="Background" 
+        <img
+          src="/18929387_rm218batch4-ning-40.jpg"
+          alt="Background"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Back to Home Link */}
-      <motion.div 
+      <motion.div
         className="absolute top-0 left-0 w-full p-6 sm:p-8 z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-80 transition-opacity drop-shadow-md"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -258,18 +268,18 @@ export default function RegisterPage() {
       </motion.div>
 
       {/* Register Card - Glassmorphism */}
-      <motion.div 
+      <motion.div
         className="relative z-20 w-full max-w-md mx-4"
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ 
+        transition={{
           duration: 0.5,
-          ease: [0.16, 1, 0.3, 1]
+          ease: [0.16, 1, 0.3, 1],
         }}
       >
         <div className="bg-white/30 backdrop-blur-xl border border-white/40 p-8 md:p-10 rounded-2xl shadow-2xl">
           <AnimatePresence mode="wait">
-            {step === 'register' ? (
+            {step === "register" ? (
               <motion.div
                 key="register-form"
                 initial={{ opacity: 0, x: -20 }}
@@ -280,7 +290,7 @@ export default function RegisterPage() {
                 {/* Header */}
                 <div className="text-center mb-8">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    Create Account ✨
+                    Create Account
                   </h1>
                   <p className="text-gray-700 font-medium text-sm">
                     Join us! Fill in your details to get started.
@@ -342,7 +352,7 @@ export default function RegisterPage() {
                   />
 
                   {error && (
-                    <motion.div 
+                    <motion.div
                       className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm text-center"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -369,7 +379,7 @@ export default function RegisterPage() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  Already have an account?{' '}
+                  Already have an account?{" "}
                   <Link
                     href="/login"
                     className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
@@ -392,7 +402,7 @@ export default function RegisterPage() {
                     className="w-16 h-16 bg-gradient-to-br from-[#0FA6E5] to-[#8BC5E0] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
                   >
                     <Mail className="w-7 h-7 text-white" />
                   </motion.div>
@@ -412,7 +422,9 @@ export default function RegisterPage() {
                   {otp.map((digit, index) => (
                     <motion.input
                       key={index}
-                      ref={(el) => { otpRefs.current[index] = el }}
+                      ref={(el) => {
+                        otpRefs.current[index] = el;
+                      }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
@@ -432,8 +444,10 @@ export default function RegisterPage() {
                 <div className="text-center mb-6">
                   {countdown > 0 ? (
                     <p className="text-sm text-gray-600">
-                      Code expires in{' '}
-                      <span className="font-bold text-gray-900">{formatTime(countdown)}</span>
+                      Code expires in{" "}
+                      <span className="font-bold text-gray-900">
+                        {formatTime(countdown)}
+                      </span>
                     </p>
                   ) : (
                     <p className="text-sm text-red-500 font-medium">
@@ -444,7 +458,7 @@ export default function RegisterPage() {
 
                 {/* Error/Success */}
                 {error && (
-                  <motion.div 
+                  <motion.div
                     className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm text-center mb-4"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -454,7 +468,7 @@ export default function RegisterPage() {
                 )}
 
                 {success && (
-                  <motion.div 
+                  <motion.div
                     className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-600 text-sm text-center mb-4"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -468,7 +482,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={handleVerifyOtp}
                   isLoading={isLoading}
-                  disabled={otp.some((d) => d === '') || countdown === 0}
+                  disabled={otp.some((d) => d === "") || countdown === 0}
                   className="w-full rounded-full mb-4"
                   size="lg"
                 >
@@ -483,10 +497,10 @@ export default function RegisterPage() {
                     disabled={!canResend || isLoading}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-                    {canResend
-                      ? 'Resend code'
-                      : `Resend in ${resendCooldown}s`}
+                    <RefreshCw
+                      className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`}
+                    />
+                    {canResend ? "Resend code" : `Resend in ${resendCooldown}s`}
                   </button>
                 </div>
 
@@ -500,10 +514,10 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setStep('register')
-                      setOtp(['', '', '', '', '', ''])
-                      setError(null)
-                      setSuccess(null)
+                      setStep("register");
+                      setOtp(["", "", "", "", "", ""]);
+                      setError(null);
+                      setSuccess(null);
                     }}
                     className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
                   >
@@ -516,5 +530,5 @@ export default function RegisterPage() {
         </div>
       </motion.div>
     </main>
-  )
+  );
 }
