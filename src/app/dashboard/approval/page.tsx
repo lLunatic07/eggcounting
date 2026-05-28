@@ -14,7 +14,6 @@ import {
   X,
   ChevronLeft,
   Phone,
-  User,
   Filter,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -153,11 +152,11 @@ export default function ApprovalPage() {
                 <ChevronLeft className="w-5 h-5" />
               </Link>
               <h1 className="text-2xl font-bold text-gray-900">
-                Approval Pesanan
+                Persetujuan Pesanan
               </h1>
               {pendingCount > 0 && (
                 <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-full">
-                  {pendingCount} pending
+                  {pendingCount} menunggu
                 </span>
               )}
             </div>
@@ -170,7 +169,7 @@ export default function ApprovalPage() {
               variant="primary"
               className="rounded-full px-8 bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0]"
             >
-              Dashboard
+              Dasbor
             </Button>
           </Link>
         </div>
@@ -308,7 +307,7 @@ export default function ApprovalPage() {
                               className="bg-green-500 hover:bg-green-600 shadow-green-500/20 text-xs rounded-lg"
                             >
                               <Check className="w-3.5 h-3.5" />
-                              Approve
+                              Setujui
                             </Button>
                             <Button
                               variant="danger"
@@ -318,7 +317,7 @@ export default function ApprovalPage() {
                               className="text-xs rounded-lg"
                             >
                               <X className="w-3.5 h-3.5" />
-                              Reject
+                              Tolak
                             </Button>
                           </div>
                         ) : order.status === OrderStatus.REJECTED ? (

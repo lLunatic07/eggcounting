@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     
     if (!verifyIotApiKey(apiKey)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Invalid API key' },
+        { success: false, error: 'API key tidak valid' },
         { status: 401 }
       )
     }
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error incrementing egg count:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

@@ -12,6 +12,8 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const roleLabel =
+    user?.role === "SUPERADMIN" ? "Admin Utama" : "Pengguna";
 
   return (
     <header className="bg-white/50 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
@@ -39,7 +41,7 @@ export function Navbar() {
                 href="/dashboard"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
               >
-                Dashboard
+                Dasbor
               </Link>
             )}
 
@@ -55,7 +57,7 @@ export function Navbar() {
                       {user?.username}
                     </p>
                     <p className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
-                      {user?.role?.toLowerCase()}
+                      {roleLabel}
                     </p>
                   </div>
                 </div>
@@ -66,7 +68,7 @@ export function Navbar() {
                   className="rounded-full px-6 bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 text-xs h-9 shadow-md shadow-red-500/20"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  Logout
+                  Keluar
                 </Button>
               </div>
             ) : (
@@ -75,7 +77,7 @@ export function Navbar() {
                   variant="primary"
                   className="rounded-full px-8 bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0] text-sm h-10"
                 >
-                  Login
+                  Masuk
                 </Button>
               </Link>
             )}
@@ -86,7 +88,7 @@ export function Navbar() {
             <button
               onClick={toggleMobileMenu}
               className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-              aria-label="Toggle Menu"
+              aria-label="Buka atau tutup menu"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -118,7 +120,7 @@ export function Navbar() {
                       {user?.username}
                     </p>
                     <p className="text-xs text-gray-500 capitalize">
-                      {user?.role?.toLowerCase()}
+                      {roleLabel}
                     </p>
                   </div>
                 </div>
@@ -141,7 +143,7 @@ export function Navbar() {
                     className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium transition-colors"
                   >
                     <LayoutGrid className="w-5 h-5" />
-                    Dashboard
+                    Dasbor
                   </Link>
                 )}
 
@@ -154,7 +156,7 @@ export function Navbar() {
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 font-medium transition-colors"
                   >
                     <LogOut className="w-5 h-5" />
-                    Logout
+                    Keluar
                   </button>
                 ) : (
                   <Link
@@ -163,7 +165,7 @@ export function Navbar() {
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0] text-white font-medium shadow-lg shadow-blue-400/20"
                   >
                     <User className="w-5 h-5" />
-                    Login ke Akun
+                    Masuk ke Akun
                   </Link>
                 )}
               </div>

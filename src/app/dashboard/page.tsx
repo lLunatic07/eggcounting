@@ -64,10 +64,10 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-8">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">
-              Monitoring Dashboard
+              Dasbor Monitoring
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              Manage egg counts and racks
+              Kelola jumlah telur dan rak
             </p>
           </div>
           <Link href="/">
@@ -75,7 +75,7 @@ export default function DashboardPage() {
               variant="primary"
               className="rounded-full px-8 bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0]"
             >
-              Home
+              Beranda
             </Button>
           </Link>
         </div>
@@ -91,8 +91,8 @@ export default function DashboardPage() {
           ></div>
           <span className="text-sm font-medium text-gray-500">
             {isConnected
-              ? "Real-time Updates Active"
-              : "Connecting to sensor..."}
+              ? "Pembaruan real-time aktif"
+              : "Menghubungkan ke sensor..."}
           </span>
         </div>
 
@@ -115,7 +115,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-xs text-green-600 bg-green-50 inline-block px-2 py-1 rounded-md font-medium">
-              Live counting
+              Hitung langsung
             </div>
           </motion.div>
 
@@ -176,7 +176,7 @@ export default function DashboardPage() {
         )}
 
         {/* Admin controls */}
-        <h2 className="text-lg font-bold text-gray-900 mb-6">Admin Actions</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-6">Aksi Admin</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {/* Reduce eggs */}
           <div className="bg-white rounded-[1.5rem] p-8 shadow-sm border border-gray-100">

@@ -31,7 +31,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching egg count:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

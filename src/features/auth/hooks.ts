@@ -36,7 +36,7 @@ export function useAuth() {
       })
 
       if (result?.error) {
-        setError('Email/username atau password salah')
+        setError('Email/nama pengguna atau kata sandi salah')
         return false
       }
 

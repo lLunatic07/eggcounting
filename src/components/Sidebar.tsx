@@ -9,17 +9,17 @@ import { useAuth } from '@/features/auth'
 
 const menuItems = [
   {
-    title: 'Dashboard',
+    title: 'Dasbor',
     href: '/dashboard',
     icon: LayoutGrid,
   },
   {
-    title: 'Approval',
+    title: 'Persetujuan',
     href: '/dashboard/approval',
     icon: ClipboardCheck,
   },
   {
-    title: 'Create User',
+    title: 'Buat Pengguna',
     href: '/dashboard/create-user',
     icon: UserPlus,
   },
@@ -28,6 +28,7 @@ const menuItems = [
 export function Sidebar() {
   const pathname = usePathname()
   const { logout, user } = useAuth()
+  const roleLabel = user?.role === 'SUPERADMIN' ? 'Admin Utama' : 'Pengguna'
 
   return (
     <aside className="w-64 bg-white min-h-screen border-r border-gray-100 flex flex-col fixed left-0 top-0 bottom-0 z-40">
@@ -77,7 +78,7 @@ export function Sidebar() {
               {user?.username}
             </p>
             <p className="text-xs text-gray-500 truncate capitalize">
-              {user?.role?.toLowerCase()}
+              {roleLabel}
             </p>
           </div>
         </div>
@@ -87,7 +88,7 @@ export function Sidebar() {
           className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          Logout
+          Keluar
         </button>
       </div>
     </aside>

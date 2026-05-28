@@ -12,7 +12,7 @@ export async function GET() {
 
     if (!session?.user) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Anda harus login terlebih dahulu' },
         { status: 401 }
       )
     }
@@ -23,7 +23,7 @@ export async function GET() {
 
     if (!currentUser) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'User not found' },
+        { success: false, error: 'Pengguna tidak ditemukan' },
         { status: 404 }
       )
     }
@@ -53,7 +53,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching orders:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Anda harus login terlebih dahulu' },
         { status: 401 }
       )
     }
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     if (!currentUser) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'User not found' },
+        { success: false, error: 'Pengguna tidak ditemukan' },
         { status: 404 }
       )
     }
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     if (!orderType || !['BUTIR', 'RAK'].includes(orderType)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Jenis order harus BUTIR atau RAK' },
+        { success: false, error: 'Jenis pesanan harus BUTIR atau RAK' },
         { status: 400 }
       )
     }
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating order:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

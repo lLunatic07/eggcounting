@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Anda harus login terlebih dahulu' },
         { status: 401 }
       )
     }
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     if (currentUser?.role !== 'SUPERADMIN') {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Only SUPERADMIN can perform this action' },
+        { success: false, error: 'Hanya admin utama yang dapat melakukan aksi ini' },
         { status: 403 }
       )
     }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     if (!amount || amount <= 0) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Amount must be a positive number' },
+        { success: false, error: 'Jumlah harus berupa angka positif' },
         { status: 400 }
       )
     }
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     
     if (!eggCount) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'No egg count record found' },
+        { success: false, error: 'Data jumlah telur tidak ditemukan' },
         { status: 404 }
       )
     }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     if (amount > currentRacks) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Cannot reduce more racks than available' },
+        { success: false, error: 'Tidak dapat mengurangi lebih dari jumlah rak tersedia' },
         { status: 400 }
       )
     }
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error reducing rack count:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

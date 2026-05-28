@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
 
 export async function sendOtpEmail(to: string, otpCode: string) {
   const mailOptions = {
-    from: `"EggCounting App" <${process.env.SMTP_USER}>`,
+    from: `"Aplikasi EggCounting" <${process.env.SMTP_USER}>`,
     to,
-    subject: 'Your OTP Verification Code — EggCounting',
+    subject: 'Kode Verifikasi OTP Anda - EggCounting',
     html: `
       <!DOCTYPE html>
       <html>
@@ -31,10 +31,10 @@ export async function sendOtpEmail(to: string, otpCode: string) {
                 <tr>
                   <td style="background:linear-gradient(135deg,#0FA6E5,#8BC5E0);padding:32px 40px;text-align:center;">
                     <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">
-                      🥚 EggCounting
+                      EggCounting
                     </h1>
                     <p style="margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:14px;">
-                      Email Verification
+                      Verifikasi Email
                     </p>
                   </td>
                 </tr>
@@ -42,10 +42,10 @@ export async function sendOtpEmail(to: string, otpCode: string) {
                 <tr>
                   <td style="padding:40px;">
                     <p style="margin:0 0 8px;color:#1e293b;font-size:18px;font-weight:600;">
-                      Hi there! 👋
+                      Halo!
                     </p>
                     <p style="margin:0 0 24px;color:#64748b;font-size:14px;line-height:1.6;">
-                      Use the following verification code to complete your registration. This code will expire in <strong>5 minutes</strong>.
+                      Gunakan kode verifikasi berikut untuk menyelesaikan pendaftaran. Kode ini berlaku selama <strong>5 menit</strong>.
                     </p>
                     <!-- OTP Code -->
                     <div style="background:#f1f5f9;border:2px dashed #cbd5e1;border-radius:12px;padding:24px;text-align:center;margin:0 0 24px;">
@@ -54,7 +54,7 @@ export async function sendOtpEmail(to: string, otpCode: string) {
                       </span>
                     </div>
                     <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;text-align:center;">
-                      If you didn't request this code, you can safely ignore this email.
+                      Jika Anda tidak meminta kode ini, abaikan email ini.
                     </p>
                   </td>
                 </tr>
@@ -62,7 +62,7 @@ export async function sendOtpEmail(to: string, otpCode: string) {
                 <tr>
                   <td style="background:#f8fafc;padding:20px 40px;text-align:center;border-top:1px solid #e2e8f0;">
                     <p style="margin:0;color:#94a3b8;font-size:11px;">
-                      &copy; ${new Date().getFullYear()} EggCounting App. All rights reserved.
+                      &copy; ${new Date().getFullYear()} Aplikasi EggCounting. Seluruh hak cipta dilindungi.
                     </p>
                   </td>
                 </tr>

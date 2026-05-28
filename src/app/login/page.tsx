@@ -28,7 +28,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 z-0">
         <img 
           src="/18929387_rm218batch4-ning-40.jpg" 
-          alt="Background" 
+          alt="Latar belakang" 
           className="w-full h-full object-cover"
         />
        
@@ -47,7 +47,7 @@ export default function LoginPage() {
           className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-80 transition-opacity drop-shadow-md"
         >
           <ChevronLeft className="w-4 h-4" />
-          Home page
+          Beranda
         </Link>
       </motion.div>
 
@@ -70,10 +70,10 @@ export default function LoginPage() {
             transition={{ delay: 0.3 }}
           >
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome Back!
+              Selamat Datang Kembali!
             </h1>
             <p className="text-gray-700 font-medium text-sm">
-              We missed you! Please enter your details.
+              Masukkan data akun Anda untuk melanjutkan.
             </p>
           </motion.div>
 
@@ -86,24 +86,24 @@ export default function LoginPage() {
             transition={{ delay: 0.4 }}
           >
             <Input
-              label="Email or Username"
+              label="Email atau Nama Pengguna"
               type="text"
               id="identifier"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              placeholder="Enter your Email or Username"
+              placeholder="Masukkan email atau nama pengguna"
               variant="light"
               className="bg-white/60 border-transparent focus:bg-white"
               required
             />
 
             <Input
-              label="Password"
+              label="Kata Sandi"
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter Password"
+              placeholder="Masukkan kata sandi"
               variant="light"
               className="bg-white/60 border-transparent focus:bg-white"
               required
@@ -125,7 +125,7 @@ export default function LoginPage() {
               className="w-full rounded-full"
               size="lg"
             >
-              Sign in
+              Masuk
             </Button>
           </motion.form>
 
@@ -136,12 +136,12 @@ export default function LoginPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            Don&apos;t have an account?{' '}
+            Belum punya akun?{' '}
             <Link
               href="/register"
               className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
             >
-              Register
+              Daftar
             </Link>
           </motion.p>
         </div>

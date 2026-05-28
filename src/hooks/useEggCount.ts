@@ -23,8 +23,9 @@ export function useEggCount() {
   }, [])
 
   useEffect(() => {
-    // Fetch initial data via HTTP
-    fetchInitialData()
+    queueMicrotask(() => {
+      void fetchInitialData()
+    })
 
     // Connect to WebSocket
     let ws: WebSocket | null = null
@@ -60,12 +61,12 @@ export function useEggCount() {
 
         ws.onerror = (err) => {
           console.error('WebSocket error:', err)
-          setError('Connection error')
+          setError('Koneksi bermasalah')
           setIsConnected(false)
         }
       } catch (err) {
         console.error('Error connecting to WebSocket:', err)
-        setError('Failed to connect')
+        setError('Gagal terhubung')
         reconnectTimeout = setTimeout(connect, 5000)
       }
     }

@@ -20,7 +20,7 @@ export function EggCounter() {
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
         <span className="text-xs text-gray-400">
-          {isConnected ? 'Live' : 'Reconnecting...'}
+          {isConnected ? 'Aktif' : 'Menghubungkan ulang...'}
         </span>
       </div>
 

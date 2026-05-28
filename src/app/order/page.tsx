@@ -7,7 +7,7 @@ import { useAuth } from "@/features/auth";
 import { useEggCount } from "@/features/eggs";
 import { useOrders, useCreateOrder } from "@/features/orders";
 import { OrderStatus } from "@/types";
-import { Button, Input } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { Egg, LayoutGrid, Loader2, ShoppingCart, Phone, Hash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { EGGS_PER_RACK } from "@/lib/utils";

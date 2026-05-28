@@ -16,7 +16,7 @@ export async function PATCH(
 
     if (!session?.user) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Anda harus login terlebih dahulu' },
         { status: 401 }
       )
     }
@@ -28,7 +28,7 @@ export async function PATCH(
 
     if (currentUser?.role !== 'SUPERADMIN') {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Only SUPERADMIN can perform this action' },
+        { success: false, error: 'Hanya admin utama yang dapat melakukan aksi ini' },
         { status: 403 }
       )
     }
@@ -39,7 +39,7 @@ export async function PATCH(
 
     if (!action || !['APPROVE', 'REJECT'].includes(action)) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Action must be APPROVE or REJECT' },
+        { success: false, error: 'Aksi harus setujui atau tolak' },
         { status: 400 }
       )
     }
@@ -54,7 +54,7 @@ export async function PATCH(
 
     if (!order) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Order not found' },
+        { success: false, error: 'Pesanan tidak ditemukan' },
         { status: 404 }
       )
     }
@@ -73,7 +73,7 @@ export async function PATCH(
 
       if (!eggCount) {
         return NextResponse.json<ApiResponse>(
-          { success: false, error: 'No egg count record found' },
+          { success: false, error: 'Data jumlah telur tidak ditemukan' },
           { status: 404 }
         )
       }
@@ -190,13 +190,13 @@ export async function PATCH(
     }
 
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Invalid action' },
+      { success: false, error: 'Aksi tidak valid' },
       { status: 400 }
     )
   } catch (error) {
     console.error('Error processing order:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

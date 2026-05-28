@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     // Validate input
     if (!username || !email || !password) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Username, email, dan password wajib diisi' },
+        { success: false, error: 'Nama pengguna, email, dan kata sandi wajib diisi' },
         { status: 400 }
       )
     }
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     // Validate password length
     if (password.length < 6) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Password minimal 6 karakter' },
+        { success: false, error: 'Kata sandi minimal 6 karakter' },
         { status: 400 }
       )
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUsername) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Username sudah digunakan' },
+        { success: false, error: 'Nama pengguna sudah digunakan' },
         { status: 400 }
       )
     }

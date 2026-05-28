@@ -42,7 +42,7 @@ export async function triggerWebSocketUpdate() {
   const WS_URL = process.env.WS_INTERNAL_URL || "ws://localhost:3001";
   const IOT_API_KEY = process.env.IOT_API_KEY || "your-iot-secret-key";
 
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((resolve) => {
     try {
       const ws = new WebSocket(WS_URL);
 

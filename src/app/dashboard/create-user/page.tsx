@@ -1,14 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useCreateUser } from '@/features/users'
 import { Button, Input } from '@/components/ui'
 import { UserPlus, CheckCircle, AlertCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
+import axios from 'axios'
 
 export default function CreateUserPage() {
-  const router = useRouter()
   const createUserMutation = useCreateUser()
   
   const [formData, setFormData] = useState({
@@ -32,15 +31,17 @@ export default function CreateUserPage() {
         role: formData.role
       })
       
-      setMessage({ type: 'success', text: 'User berhasil dibuat!' })
+      setMessage({ type: 'success', text: 'Pengguna berhasil dibuat!' })
       setFormData({ username: '', email: '', password: '', role: 'USER' }) // Reset form
       
       // Optional: Redirect after success
       // setTimeout(() => router.push('/dashboard'), 2000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       setMessage({ 
         type: 'error', 
-        text: error?.response?.data?.message || 'Gagal membuat user' 
+        text: axios.isAxiosError(error) && error.response?.data?.error
+          ? error.response.data.error
+          : 'Gagal membuat pengguna'
       })
     }
   }
@@ -51,10 +52,10 @@ export default function CreateUserPage() {
         {/* Header */}
         <div className="mb-8">
            <h1 className="text-2xl font-bold text-gray-900">
-              Create User
+              Buat Pengguna
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              Add new administrator or user to the system
+              Tambahkan admin atau pengguna baru ke sistem
             </p>
         </div>
 
@@ -77,41 +78,41 @@ export default function CreateUserPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
-              label="Username"
+              label="Nama Pengguna"
               id="username"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              placeholder="e.g. johndoe"
+              placeholder="cth. budi"
               variant="light"
               className="bg-gray-50"
               required
             />
 
             <Input
-              label="Email (Optional)"
+              label="Email (Opsional)"
               type="email"
               id="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="e.g. john@example.com"
+              placeholder="cth. budi@example.com"
               variant="light"
                className="bg-gray-50"
             />
 
             <Input
-              label="Password"
+              label="Kata Sandi"
               type="password"
               id="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="••••••••"
+              placeholder="Minimal 6 karakter"
               variant="light"
                className="bg-gray-50"
               required
             />
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700">Role</label>
+              <label className="block text-xs font-bold text-gray-700">Peran</label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
@@ -122,7 +123,7 @@ export default function CreateUserPage() {
                       : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  Reguler User
+                  Pengguna Reguler
                 </button>
                 <button
                   type="button"
@@ -133,7 +134,7 @@ export default function CreateUserPage() {
                       : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  Super Admin
+                  Admin Utama
                 </button>
               </div>
             </div>
@@ -146,7 +147,7 @@ export default function CreateUserPage() {
                 isLoading={createUserMutation.isPending}
                 leftIcon={<UserPlus className="w-4 h-4" />}
               >
-                Create User
+                Buat Pengguna
               </Button>
             </div>
           </form>

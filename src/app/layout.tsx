@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Egg Counter - Sistem Penghitungan Telur",
-  description: "Real-time monitoring sistem penghitungan telur menggunakan IoT",
+  description: "Monitoring jumlah telur secara real-time menggunakan IoT",
 };
 
 export default function RootLayout({

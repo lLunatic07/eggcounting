@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       })
 
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Username atau email sudah terdaftar' },
+        { success: false, error: 'Nama pengguna atau email sudah terdaftar' },
         { status: 400 }
       )
     }

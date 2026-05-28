@@ -95,7 +95,7 @@ export default function RegisterPage() {
 
     // Client-side validation
     if (!username.trim()) {
-      setError("Username wajib diisi");
+      setError("Nama pengguna wajib diisi");
       return;
     }
 
@@ -105,12 +105,12 @@ export default function RegisterPage() {
     }
 
     if (password.length < 6) {
-      setError("Password minimal 6 karakter");
+      setError("Kata sandi minimal 6 karakter");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Password dan konfirmasi password tidak cocok");
+      setError("Kata sandi dan konfirmasi kata sandi tidak cocok");
       return;
     }
 
@@ -245,7 +245,7 @@ export default function RegisterPage() {
       <div className="absolute inset-0 z-0">
         <img
           src="/18929387_rm218batch4-ning-40.jpg"
-          alt="Background"
+          alt="Latar belakang"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/10" />
@@ -263,7 +263,7 @@ export default function RegisterPage() {
           className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-80 transition-opacity drop-shadow-md"
         >
           <ChevronLeft className="w-4 h-4" />
-          Home page
+          Beranda
         </Link>
       </motion.div>
 
@@ -290,22 +290,22 @@ export default function RegisterPage() {
                 {/* Header */}
                 <div className="text-center mb-8">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    Create Account
+                    Buat Akun
                   </h1>
                   <p className="text-gray-700 font-medium text-sm">
-                    Join us! Fill in your details to get started.
+                    Isi data berikut untuk mulai menggunakan aplikasi.
                   </p>
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSendOtp} className="space-y-5">
                   <Input
-                    label="Username"
+                    label="Nama Pengguna"
                     type="text"
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Choose a username"
+                    placeholder="Pilih nama pengguna"
                     variant="light"
                     className="bg-white/60 border-transparent focus:bg-white"
                     leftIcon={<User className="w-4 h-4" />}
@@ -318,7 +318,7 @@ export default function RegisterPage() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder="Masukkan email"
                     variant="light"
                     className="bg-white/60 border-transparent focus:bg-white"
                     leftIcon={<Mail className="w-4 h-4" />}
@@ -326,12 +326,12 @@ export default function RegisterPage() {
                   />
 
                   <Input
-                    label="Password"
+                    label="Kata Sandi"
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Min. 6 characters"
+                    placeholder="Minimal 6 karakter"
                     variant="light"
                     className="bg-white/60 border-transparent focus:bg-white"
                     leftIcon={<Lock className="w-4 h-4" />}
@@ -339,12 +339,12 @@ export default function RegisterPage() {
                   />
 
                   <Input
-                    label="Confirm Password"
+                    label="Konfirmasi Kata Sandi"
                     type="password"
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Re-enter your password"
+                    placeholder="Masukkan ulang kata sandi"
                     variant="light"
                     className="bg-white/60 border-transparent focus:bg-white"
                     leftIcon={<Lock className="w-4 h-4" />}
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                     size="lg"
                     rightIcon={<ArrowRight className="w-4 h-4" />}
                   >
-                    Send OTP
+                    Kirim OTP
                   </Button>
                 </form>
 
@@ -379,12 +379,12 @@ export default function RegisterPage() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  Already have an account?{" "}
+                  Sudah punya akun?{" "}
                   <Link
                     href="/login"
                     className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
                   >
-                    Sign in
+                    Masuk
                   </Link>
                 </motion.p>
               </motion.div>
@@ -407,10 +407,10 @@ export default function RegisterPage() {
                     <Mail className="w-7 h-7 text-white" />
                   </motion.div>
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    Verify Email
+                    Verifikasi Email
                   </h1>
                   <p className="text-gray-700 font-medium text-sm">
-                    We sent a 6-digit code to
+                    Kami mengirim kode 6 digit ke
                   </p>
                   <p className="text-blue-600 font-semibold text-sm mt-1">
                     {email}
@@ -444,7 +444,7 @@ export default function RegisterPage() {
                 <div className="text-center mb-6">
                   {countdown > 0 ? (
                     <p className="text-sm text-gray-600">
-                      Code expires in{" "}
+                      Kode berlaku selama{" "}
                       <span className="font-bold text-gray-900">
                         {formatTime(countdown)}
                       </span>
@@ -486,7 +486,7 @@ export default function RegisterPage() {
                   className="w-full rounded-full mb-4"
                   size="lg"
                 >
-                  Verify & Create Account
+                  Verifikasi & Buat Akun
                 </Button>
 
                 {/* Resend OTP */}
@@ -500,7 +500,7 @@ export default function RegisterPage() {
                     <RefreshCw
                       className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`}
                     />
-                    {canResend ? "Resend code" : `Resend in ${resendCooldown}s`}
+                    {canResend ? "Kirim ulang kode" : `Kirim ulang dalam ${resendCooldown}s`}
                   </button>
                 </div>
 
@@ -521,7 +521,7 @@ export default function RegisterPage() {
                     }}
                     className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
                   >
-                    ← Back to register form
+                    Kembali ke formulir pendaftaran
                   </button>
                 </motion.p>
               </motion.div>

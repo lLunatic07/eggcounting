@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { getServerSession } from 'next-auth'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { authOptions } from '@/lib/auth'
 import { CreateUserRequest, ApiResponse } from '@/types'
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: 'Anda harus login terlebih dahulu' },
         { status: 401 }
       )
     }
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     if (currentUser?.role !== 'SUPERADMIN') {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Only SUPERADMIN can create users' },
+        { success: false, error: 'Hanya admin utama yang dapat membuat pengguna' },
         { status: 403 }
       )
     }
@@ -37,13 +38,13 @@ export async function POST(request: NextRequest) {
 
     if (!username || !password || !role) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Username, password, and role are required' },
+        { success: false, error: 'Nama pengguna, kata sandi, dan peran wajib diisi' },
         { status: 400 }
       )
     }
 
     // Check if email or username already exists
-    const orConditions: any[] = [{ username }]
+    const orConditions: Prisma.UserWhereInput[] = [{ username }]
     if (email) {
       orConditions.push({ email })
     }
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json<ApiResponse>(
-        { success: false, error: 'Email or username already exists' },
+        { success: false, error: 'Email atau nama pengguna sudah terdaftar' },
         { status: 400 }
       )
     }
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     // Create user
     const newUser = await prisma.user.create({
       data: {
-        email: (email || null) as any,
+        email: email || null,
         username,
         password: hashedPassword,
         role
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating user:', error)
     return NextResponse.json<ApiResponse>(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: 'Terjadi kesalahan pada server' },
       { status: 500 }
     )
   }

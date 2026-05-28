@@ -8,12 +8,12 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        identifier: { label: 'Email or Username', type: 'text' },
-        password: { label: 'Password', type: 'password' }
+        identifier: { label: 'Email atau Nama Pengguna', type: 'text' },
+        password: { label: 'Kata Sandi', type: 'password' }
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) {
-          throw new Error('Email/username and password required')
+          throw new Error('Email/nama pengguna dan kata sandi wajib diisi')
         }
 
         // Find user by email or username
@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!user) {
-          throw new Error('Invalid credentials')
+          throw new Error('Email/nama pengguna atau kata sandi salah')
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) {
-          throw new Error('Invalid credentials')
+          throw new Error('Email/nama pengguna atau kata sandi salah')
         }
 
         return {
