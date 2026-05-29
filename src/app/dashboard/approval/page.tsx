@@ -139,19 +139,19 @@ export default function ApprovalPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] font-sans p-8">
+    <main className="min-h-screen bg-[#F8FAFC] font-sans p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <div className="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 href="/dashboard"
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-600"
+                className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
               >
                 <ChevronLeft className="w-5 h-5" />
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
                 Persetujuan Pesanan
               </h1>
               {pendingCount > 0 && (
@@ -160,14 +160,14 @@ export default function ApprovalPage() {
                 </span>
               )}
             </div>
-            <p className="text-gray-500 text-sm ml-12">
+            <p className="text-sm text-gray-500 sm:ml-12">
               Setujui atau tolak pesanan telur dari pembeli
             </p>
           </div>
           <Link href="/dashboard">
             <Button
               variant="primary"
-              className="rounded-full px-8 bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0]"
+              className="w-full rounded-full bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0] px-8 sm:w-auto"
             >
               Dasbor
             </Button>
@@ -193,28 +193,30 @@ export default function ApprovalPage() {
         </AnimatePresence>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-2 mb-6">
-          <Filter className="w-4 h-4 text-gray-400" />
-          {filterButtons.map((btn) => (
-            <button
-              key={btn.value}
-              onClick={() => setFilter(btn.value)}
-              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                filter === btn.value
-                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              {btn.label}
-            </button>
-          ))}
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto pb-1">
+          <Filter className="h-4 w-4 shrink-0 text-gray-400" />
+          <div className="flex min-w-max gap-2">
+            {filterButtons.map((btn) => (
+              <button
+                key={btn.value}
+                onClick={() => setFilter(btn.value)}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                  filter === btn.value
+                    ? "border border-blue-200 bg-blue-50 text-blue-700"
+                    : "border border-gray-200 bg-white text-gray-500 hover:border-gray-300"
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Orders Table */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+          className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
         >
           {ordersLoading ? (
             <div className="flex justify-center py-16">
@@ -226,7 +228,89 @@ export default function ApprovalPage() {
               <p>Tidak ada pesanan</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+              <div className="space-y-3 p-4 md:hidden">
+                {filteredOrders.map((order: EggShopOrder) => (
+                  <div
+                    key={order.id}
+                    className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm"
+                  >
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-gray-900">
+                          {order.user?.username || "-"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(order.createdAt).toLocaleDateString("id-ID", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                      <div className="shrink-0">{getStatusBadge(order.status)}</div>
+                    </div>
+
+                    <div className="grid gap-2 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-gray-500">No HP</span>
+                        <span className="flex min-w-0 items-center gap-1.5 text-right font-medium text-gray-700">
+                          <Phone className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                          <span className="truncate">{order.phoneNumber}</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-gray-500">Jumlah</span>
+                        <span className="text-right font-semibold text-gray-900">
+                          {order.count}{" "}
+                          {order.orderType === "RAK"
+                            ? `rak (${order.count * EGGS_PER_RACK} butir)`
+                            : "butir"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      {order.status === OrderStatus.PENDING ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleApprove(order.id)}
+                            disabled={processOrderMutation.isPending}
+                            className="rounded-lg bg-green-500 text-xs shadow-green-500/20 hover:bg-green-600"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Setujui
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => setRejectingId(order.id)}
+                            disabled={processOrderMutation.isPending}
+                            className="rounded-lg text-xs"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                            Tolak
+                          </Button>
+                        </div>
+                      ) : order.status === OrderStatus.REJECTED ? (
+                        <p className="text-xs text-gray-400">
+                          {order.rejectedReason}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-gray-400">
+                          Disetujui oleh {order.approvedBy?.username || "-"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
               <table className="w-full">
                 <thead className="bg-gray-50/50">
                   <tr>
@@ -334,7 +418,8 @@ export default function ApprovalPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+              </div>
+            </>
           )}
         </motion.div>
       </div>
@@ -356,7 +441,7 @@ export default function ApprovalPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl"
+              className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl sm:p-8"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -375,7 +460,7 @@ export default function ApprovalPage() {
                 autoFocus
               />
 
-              <div className="flex gap-3 mt-6">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button
                   variant="secondary"
                   className="flex-1 rounded-xl"

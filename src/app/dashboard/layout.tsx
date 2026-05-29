@@ -39,7 +39,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Sidebar />
-      <div className="pl-64">{children}</div>
+      <div className="pt-16 pb-24 md:pt-0 md:pb-0 md:pl-64">{children}</div>
     </div>
   );
 }

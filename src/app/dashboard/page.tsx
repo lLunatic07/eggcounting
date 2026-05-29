@@ -58,12 +58,12 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] font-sans p-8">
+    <main className="min-h-screen bg-[#F8FAFC] font-sans p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Content */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
               Dasbor Monitoring
             </h1>
             <p className="text-gray-500 text-sm mt-1">
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           <Link href="/">
             <Button
               variant="primary"
-              className="rounded-full px-8 bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0]"
+              className="w-full rounded-full bg-gradient-to-r from-[#0FA6E5] to-[#8BC5E0] px-8 sm:w-auto"
             >
               Beranda
             </Button>
@@ -81,7 +81,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Connection status */}
-        <div className="flex items-center gap-2 mb-8">
+        <div className="mb-6 flex items-center gap-2 sm:mb-8">
           <div
             className={`w-2.5 h-2.5 rounded-full ${
               isConnected
@@ -97,20 +97,20 @@ export default function DashboardPage() {
         </div>
 
         {/* Current Status Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:mb-10 lg:grid-cols-3 lg:gap-6">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-[1.5rem] p-6 shadow-xl border border-gray-100"
+            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-6"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-sm text-gray-500 font-medium">Total Telur</p>
-                <h3 className="text-3xl font-bold text-gray-900 mt-1 tabular-nums">
+                <h3 className="mt-1 text-3xl font-bold tabular-nums text-gray-900">
                   <AnimatedCounter value={eggData?.count ?? 0} />
                 </h3>
               </div>
-              <div className="p-3 bg-blue-50 rounded-xl">
+              <div className="shrink-0 rounded-xl bg-blue-50 p-3">
                 <Egg className="w-6 h-6 text-blue-500" />
               </div>
             </div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-[1.5rem] p-6 shadow-xl border border-gray-100"
+            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-6"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                   <AnimatedCounter value={eggData?.racks ?? 0} />
                 </h3>
               </div>
-              <div className="p-3 bg-orange-50 rounded-xl">
+              <div className="shrink-0 rounded-xl bg-orange-50 p-3">
                 <LayoutGrid className="w-6 h-6 text-orange-500" />
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-[1.5rem] p-6 shadow-xl border border-gray-100"
+            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-lg sm:p-6"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -152,7 +152,7 @@ export default function DashboardPage() {
                   <AnimatedCounter value={eggData?.remainingEggs ?? 0} />
                 </h3>
               </div>
-              <div className="p-3 bg-purple-50 rounded-xl">
+              <div className="shrink-0 rounded-xl bg-purple-50 p-3">
                 <AlertTriangle className="w-6 h-6 text-purple-500" />
               </div>
             </div>
@@ -176,12 +176,12 @@ export default function DashboardPage() {
         )}
 
         {/* Admin controls */}
-        <h2 className="text-lg font-bold text-gray-900 mb-6">Aksi Admin</h2>
-        <div className="grid md:grid-cols-2 gap-8">
+        <h2 className="mb-4 text-lg font-bold text-gray-900 sm:mb-6">Aksi Admin</h2>
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-8">
           {/* Reduce eggs */}
-          <div className="bg-white rounded-[1.5rem] p-8 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <span className="p-2 bg-red-50 rounded-lg text-red-500">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
+            <h3 className="mb-5 flex items-center gap-2 text-base font-semibold text-gray-900 sm:mb-6 sm:text-lg">
+              <span className="shrink-0 rounded-lg bg-red-50 p-2 text-red-500">
                 <Egg className="w-5 h-5" />
               </span>
               Kurangi Telur Manual
@@ -214,9 +214,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Reduce racks */}
-          <div className="bg-white rounded-[1.5rem] p-8 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-              <span className="p-2 bg-red-50 rounded-lg text-red-500">
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
+            <h3 className="mb-5 flex items-center gap-2 text-base font-semibold text-gray-900 sm:mb-6 sm:text-lg">
+              <span className="shrink-0 rounded-lg bg-red-50 p-2 text-red-500">
                 <LayoutGrid className="w-5 h-5" />
               </span>
               Kurangi Rak Manual

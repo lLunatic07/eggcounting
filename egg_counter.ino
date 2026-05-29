@@ -3,9 +3,9 @@
 #include <ArduinoJson.h>
 
 // --- Konfigurasi ---
-const char* ssid = "Waysw";
-const char* password = "";
-const char* server_url = "http://54.206.87.159:3000/api/eggs/increment";
+const char* ssid = "Buddha";
+const char* password = "12345678";
+const char* server_url = "http://47.128.152.83:3000/api/eggs/increment";
 const char* apiKey = "esp32-egg-counter-key";
 
 // Pin
@@ -63,6 +63,12 @@ void buzzerAlert() {
   }
 }
 
+void buzzerBeepOnce() {
+  digitalWrite(buzzerPin, HIGH);
+  delay(80);
+  digitalWrite(buzzerPin, LOW);
+}
+
 bool sendCountUpdate() {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("[HTTP] WiFi Disconnected, akan retry...");
@@ -83,12 +89,13 @@ bool sendCountUpdate() {
   http.addHeader("X-API-Key", apiKey);
   http.setTimeout(5000);
 
-  // ✅ Kirim totalCount absolut — retry-safe
-  String requestBody = "{\"totalCount\":" + String(currentEgg) + "}";
-  Serial.printf("[HTTP] Mengirim totalCount: %lu (belum terkirim: %lu)\n", currentEgg, diff);
+  // Kirim jumlah telur baru sejak request sukses terakhir.
+  // Ini menjaga stok web tetap benar walaupun admin mengurangi/reset stok.
+  String requestBody = "{\"increment\":" + String(diff) + "}";
+  Serial.printf("[HTTP] Mengirim increment: %lu (total lokal: %lu)\n", diff, currentEgg);
 
   int httpResponseCode = http.POST(requestBody);
-  if (httpResponseCode > 0) {
+  if (httpResponseCode >= 200 && httpResponseCode < 300) {
     String response = http.getString();
     Serial.printf("[HTTP] Sukses (%d): %s\n", httpResponseCode, response.c_str());
     http.end();
@@ -99,7 +106,9 @@ bool sendCountUpdate() {
 
     return true;
   } else {
-    Serial.printf("[HTTP] Gagal: %s — akan retry...\n", http.errorToString(httpResponseCode).c_str());
+    String response = http.getString();
+    Serial.printf("[HTTP] Gagal (%d): %s\n", httpResponseCode, response.c_str());
+    Serial.println("[HTTP] Akan retry...");
     http.end();
     return false;
   }
@@ -213,6 +222,7 @@ void loop() {
   // Hitung hanya saat TRANSISI: false → true
   if (confirmedPresent && !wasConfirmedPresent) {
     eggCount++;
+    buzzerBeepOnce();
     Serial.printf("\n>>> Telur Terdeteksi! Total: %lu\n", eggCount);
 
     if (eggCount % 60 == 0) {

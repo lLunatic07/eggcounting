@@ -47,11 +47,11 @@ export default function CreateUserPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] font-sans p-8">
+    <main className="min-h-screen bg-[#F8FAFC] font-sans p-4 sm:p-6 lg:p-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-           <h1 className="text-2xl font-bold text-gray-900">
+        <div className="mb-6 sm:mb-8">
+           <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">
               Buat Pengguna
             </h1>
             <p className="text-gray-500 text-sm mt-1">
@@ -63,7 +63,7 @@ export default function CreateUserPage() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-[1.5rem] p-8 shadow-sm border border-gray-100"
+          className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8"
         >
           {message && (
              <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
@@ -113,7 +113,7 @@ export default function CreateUserPage() {
 
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-gray-700">Peran</label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: 'USER' })}
