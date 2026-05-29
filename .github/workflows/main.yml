@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg NEXT_PUBLIC_WS_URL="ws://47.128.152.83:3001" \
+            --build-arg NEXT_PUBLIC_WS_URL="wss://eggcounting.my.id/ws" \
             -t ghcr.io/llunatic07/eggcounting:latest \
             .
 
